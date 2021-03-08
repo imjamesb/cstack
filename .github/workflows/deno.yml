@@ -1,7 +1,7 @@
 name: Deno CI
 on:
-- push
-- pr
+  - push
+  - pr
 jobs:
   deno:
     name: ${{ matrix.kind }} ${{ matrix.os }}
