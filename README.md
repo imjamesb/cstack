@@ -26,6 +26,6 @@ throw createError({
     { at: "file://a/b/c.ts", y: 123 },
     { at: "file://a/b/c.ts", y: 123, x: 456 },
     "    strings work too",
-  ]
+  ],
 });
 ```
