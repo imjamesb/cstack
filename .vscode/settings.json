@@ -1,0 +1,12 @@
+{
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "[typescript]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+  }
+}
