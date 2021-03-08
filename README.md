@@ -4,10 +4,11 @@ Create a fancy error with a custom stack.
 
 ```ts
 // Imports
-import { createError } from "https://deno.land/x/cstack@0.1.0/mod.ts";
+import { createError } from "https://deno.land/x/cstack@0.1.0/mod.ts";
 ```
 
-You can create an error by either passing an error object or creating your own custom stack.
+You can create an error by either passing an error object or creating your own
+custom stack.
 
 ```ts
 throw createError(new Error("hello world!"));
