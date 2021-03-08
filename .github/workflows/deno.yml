@@ -1,7 +1,5 @@
 name: Deno CI
-on:
-  - push
-  - pr
+on: [push, pull_request]
 jobs:
   deno:
     name: ${{ matrix.kind }} ${{ matrix.os }}
