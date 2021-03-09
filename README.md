@@ -48,7 +48,12 @@ throw error;
 
 ![preview](https://cdn.discordapp.com/attachments/488504688245997578/818773081878167592/unknown.png)
 
-The magic behind this is a *secret* property in the object called `__modifiedStack` which contains styled version of the `stack` property. The `magicError` function do some magic things to make sure that the `stack` property is the `__modifiedStack` property only when the error is thrown, that way we can show custom messages when throwing errors and have a normal error object otherwise.
+The magic behind this is a _secret_ property in the object called
+`__modifiedStack` which contains styled version of the `stack` property. The
+`magicError` function do some magic things to make sure that the `stack`
+property is the `__modifiedStack` property only when the error is thrown, that
+way we can show custom messages when throwing errors and have a normal error
+object otherwise.
 
 ```ts
 let error = new Error() as Error & { __modifiedStack: string };
