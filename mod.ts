@@ -95,6 +95,7 @@ function _<X>(caught: X, thrown: X): {
 export function _createError(stack: ErrorStack): XS<Error> {
   const err = new Error() as XS<Error>;
   err.name = stack.name;
+  err.message = stack.message || "";
   err.stack = `${stack.name}: ${stack.message}`;
   err.__modifiedStack = `${bold(red(stack.name))}: ${stack.message}`;
   for (const item of stack.trace) {
