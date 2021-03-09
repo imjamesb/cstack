@@ -51,7 +51,7 @@ throw error;
 The magic behind this is a *secret* property in the object called `__modifiedStack` which contains styled version of the `stack` property. The `magicError` function do some magic things to make sure that the `stack` property is the `__modifiedStack` property only when the error is thrown, that way we can show custom messages when throwing errors and have a normal error object otherwise.
 
 ```ts
-const error = new Error() as Error & { __modifiedStack: string };
+let error = new Error() as Error & { __modifiedStack: string };
 error.name = "Custom Error";
 error.message = "Hello";
 error.stack = error.__modifiedStack = "Hello World, this is a modified stack";
