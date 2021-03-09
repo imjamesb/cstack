@@ -56,7 +56,7 @@ error.name = "Custom Error";
 error.message = "Hello";
 error.stack = error.__modifiedStack = "Hello World, this is a modified stack";
 error.__modifiedStack += "\n    This will only show when the error is thrown!";
-const error2 = magicError(error);
+error = magicError(error);
 
 try {
   throw error;
