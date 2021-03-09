@@ -31,3 +31,19 @@ throw createError({
 ```
 
 ![preview](https://cdn.discordapp.com/attachments/712010403302866974/818489534098309151/unknown.png)
+
+Cstack produces clean error objects, yet beautiful errors when thrown.
+
+```ts
+try {
+  throw error;
+} catch (error) {
+  console.log("Name:", error.name);
+  console.log("Message:", error.message);
+  console.log("Stack:", error.stack);
+}
+
+throw error;
+```
+
+![preview](https://cdn.discordapp.com/attachments/488504688245997578/818773081878167592/unknown.png)
