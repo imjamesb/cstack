@@ -38,7 +38,6 @@ function loadFile(file: string) {
     fileColoredCache.set(file, _cout);
   } catch (error) {
     // Ignore this.
-    console.log(error, file);
   }
 }
 
