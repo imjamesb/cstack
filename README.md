@@ -1,77 +1,34 @@
 # Custom Stack
 
-Create a fancy error with a custom stack.
+![header image](.assets/header.png)
+
+This [deno](https://deno.land) module allows you to create the coolest looking
+errors, and customize the error stack trace as you wish. Given the opportunity cstack will also load your file content, highlight it, and pinpoint exactly where your errors are thrown.
+
+Now you never have to be wondering "why the fuck doesn't this work?" ever again! With a 100% guarantee you'll receive less [WTFs](https://www.gridshore.nl/2008/03/29/how-wtfs-improve-code-quality-awareness/) a minute using this tool. We got you covered!
+
+## Usage for lazy people
+
+If you're one of those people who's just interested in getting these fucking awesome looking errors in your application, all you have to do is import the Error replacement script.
 
 ```ts
-// Imports
-import { createError } from "https://deno.land/x/cstack@0.1.0/mod.ts";
+import "https://deno.land/x/cstack/errors.ts";
 ```
 
-You can create an error by either passing an error object or creating your own
-custom stack.
+Now before you go try this out and an error is spat at your face not looking as fancy as you expected, there is a known unfixable issue. CStack cannot replace errors thrown by V8 or the Deno core, but, we've implemented a short fix for you. All you have to do it catch the error and rethrow it using one of cstack's functions:
 
 ```ts
-throw createError(new Error("hello world!"));
-```
-
-or
-
-```ts
-throw createError({
-  name: "Custom Error",
-  message: "hello world",
-  trace: [
-    { at: "somewhere" },
-    { at: "file://a/b/c.ts", async: true },
-    { at: "file://a/b/c.ts", y: 123 },
-    { at: "file://a/b/c.ts", y: 123, x: 456 },
-    "    strings work too",
-  ],
-});
-```
-
-![preview](https://cdn.discordapp.com/attachments/712010403302866974/818489534098309151/unknown.png)
-
-Cstack produces clean error objects, yet beautiful errors when thrown.
-
-```ts
-try {
-  throw error;
-} catch (error) {
-  console.log("Name:", error.name);
-  console.log("Message:", error.message);
-  console.log("Stack:", error.stack);
-}
-
-throw error;
-```
-
-![preview](https://cdn.discordapp.com/attachments/488504688245997578/818773081878167592/unknown.png)
-
-The magic behind this is a _secret_ property in the object called
-`__modifiedStack` which contains styled version of the `stack` property. The
-`magicError` function do some magic things to make sure that the `stack`
-property is the `__modifiedStack` property only when the error is thrown, that
-way we can show custom messages when throwing errors and have a normal error
-object otherwise.
-
-```ts
-let error = new Error() as Error & { __modifiedStack: string };
-error.name = "Custom Error";
-error.message = "Hello";
-error.stack = error.__modifiedStack = "Hello World, this is a modified stack";
-error.__modifiedStack += "\n    This will only show when the error is thrown!";
-error = magicError(error);
+import { fix } from "https://deno.land/x/cstack/utils.ts";
 
 try {
-  throw error;
+  somethingThatWillCauseDenoOrV8ToThrow();
 } catch (error) {
-  console.log("Name:", error.name);
-  console.log("Message:", error.message);
-  console.log("Stack:", error.stack);
+  throw fix(error);
 }
-
-throw error;
 ```
 
-![preview](https://cdn.discordapp.com/attachments/488504688245997578/818775293782654976/unknown.png)
+Now go have fun!
+
+## Usage for you advanced users
+
+More information for advanced users coming whenever I feel like it, PR is welcome.
