@@ -20,22 +20,27 @@ function loadFile(file: string) {
   if (fileCache.has(file)) return;
   try {
     const _content = Deno.readTextFileSync(file);
-    const ccontent = new Typescript(_content, DefaultTheme, {
-      output: "console",
-    }).highlight().split(/\r?\n/);
+    const ext = file.substring(file.length - 3, file.length);
+    const ccontent = ext === ".ts" || ext === ".js"
+      ? new Typescript(_content, DefaultTheme, {
+        output: "console",
+      }).highlight().split(/\r?\n/)
+      : null;
     const content = _content.split(/\r?\n/);
     const _out: [number, string][] = [];
     const _cout: [number, string][] = [];
     for (let y = 0; y < content.length; y++) {
       const line = content[y];
       if (!line.trim()) continue;
-      const cline = ccontent[y];
       const _y = y + 1;
       _out.push([_y, line]);
-      _cout.push([_y, cline]);
+      if (ccontent) {
+        const cline = ccontent[y];
+        _cout.push([_y, cline]);
+      }
     }
     fileCache.set(file, _out);
-    fileColoredCache.set(file, _cout);
+    if (ccontent) fileColoredCache.set(file, _cout);
   } catch (error) {
     // Ignore this.
   }
