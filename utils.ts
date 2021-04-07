@@ -627,5 +627,10 @@ export function magic<X extends Error>(
 }
 
 export function fix(error: Error) {
+  if (error && !(error instanceof Error)) {
+    const _ = new Error((error as Error).message);
+    _.name = (error as Error).name, _.stack = (error as Error).stack;
+    error = _;
+  }
   return magic(build(error, true));
 }
