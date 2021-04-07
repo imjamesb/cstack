@@ -256,7 +256,6 @@ export function parseTraceItem(line: string): ErrorTrace {
         _isAtEnd + 2,
         _tmpLocation.length,
       ));
-      // if (__y) __y++;
     }
     let name: string | null = _tmpLocation.substring(8, _evalNameEnd);
     if (name === anon) name = null;
@@ -631,8 +630,8 @@ export function magic<X extends Error>(
 }
 
 export function fix(error: Error) {
-  if (error && !(error instanceof Error)) {
-    const _ = new Error((error as Error).message);
+  if (error && !(error instanceof oError)) {
+    const _ = new oError((error as Error).message);
     _.name = (error as Error).name, _.stack = (error as Error).stack;
     error = _;
   }
