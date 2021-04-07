@@ -136,6 +136,9 @@ function parseFileName(
           y = _y;
           x = _x;
           _filenameIndexEnd = _y_;
+        } else {
+          y = _x;
+          _filenameIndexEnd = _x_;
         }
       } else {
         y = _x;
@@ -530,12 +533,13 @@ function buildBoth(stack: ErrorStack): [string, string] {
       //     trace += `\n ${y.padStart(largestCodeNo)} | ${code}`;
       //   }
       // }
+      if (!line.coloredCode && line.code) line.coloredCode = line.code;
       if (line.coloredCode) {
         for (const [lineNo, code] of line.coloredCode) {
           const y = lineNo.toString();
-          ctrace += `\n ${yellow(y.padStart(largestCodeNo))} ${
-            dim("|")
-          } ${code}`;
+          ctrace += `\n ${
+            (lineNo === line.y ? red : yellow)(y.padStart(largestCodeNo))
+          } ${dim("|")} ${code}`;
           if (lineNo === line.y && line.x) {
             ctrace += `\n ${"".padStart(largestCodeNo)} ${dim("|")} ${
               red("~".repeat(line.x - 1 || 0) + "^")
