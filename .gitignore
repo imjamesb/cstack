@@ -1,0 +1,10 @@
+*
+!/.assets
+!/.github
+!/.vscode
+!/lib
+!/lib/**
+!/.gitignore
+!/LICENSE
+!/mod.ts
+!/README.md
