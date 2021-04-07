@@ -5,6 +5,7 @@
 !/lib
 !/lib/**
 !/.gitignore
+!/deps.ts
 !/LICENSE
 !/mod.ts
 !/README.md
