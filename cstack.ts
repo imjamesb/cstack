@@ -669,4 +669,8 @@ export class CustomStack extends oError {
     }
     return str;
   }
+
+  protected getStack(): StackTraceItem[] {
+    return this.#stack;
+  }
 }
