@@ -20,21 +20,6 @@ const global = globalThis as unknown as Record<string, unknown>;
 global.oError ??= global.Error;
 const oError: ErrorConstructor = global.oError as ErrorConstructor;
 
-// @ts-ignore Don't worry about it.
-oError.stackTraceLimit = Infinity;
-
-let stackTraceLimit = 10;
-
-global.Error = class Error extends oError {
-  public static get stackTraceLimit() {
-    return stackTraceLimit;
-  }
-
-  public static set stackTraceLimit(value: number) {
-    stackTraceLimit = value;
-  }
-};
-
 export class Line {
   public readonly no: number;
   public readonly noLen: number;
@@ -455,6 +440,13 @@ export class CustomStack extends oError {
       message = "";
     }
     super(message);
+    // @ts-ignore It's a thing, get over it.
+    const limit = Error.stackTraceLimit;
+    // @ts-ignore It's a thing, get over it.
+    Error.stackTraceLimit = Infinity;
+    Error.captureStackTrace(this, oError);
+    // @ts-ignore It's a thing, get over it.
+    Error.stackTraceLimit = limit;
     const parsed = ErrorTrace.parse(err || this);
     this.name = parsed.name;
     this.#message = (parsed.message || "").trim() ? parsed.message : undefined;
