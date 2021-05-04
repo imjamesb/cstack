@@ -397,11 +397,12 @@ export class ErrorTrace {
   public static parseStack(stack: string): ErrorTrace {
     const [firstLine, ...traceLines] = stack.split(/\r?\n/);
     const [name, ...msgParts] = firstLine.split(": ");
+    if (msgParts.length < 1 && !traceLines[0]) traceLines.shift();
     const message = msgParts.join(": ");
     return new ErrorTrace({
       name,
       message,
-      stack: name + ": " + message +
+      stack: name + (message ? ": " + message : "") +
         (traceLines.length > 0 ? "\n" + traceLines.join("\n") : ""),
     });
   }
@@ -423,7 +424,6 @@ export class ErrorTrace {
 }
 
 export class CustomStack extends oError {
-  #name: string;
   #message?: string;
   #stack: StackTraceItem[];
 
@@ -435,16 +435,10 @@ export class CustomStack extends oError {
     }
     super(message);
     const parsed = ErrorTrace.parse(err || this);
-    this.#name = parsed.name;
-    this.#message = parsed.message;
+    this.name = parsed.name;
+    this.#message = (parsed.message || "").trim() ? parsed.message : undefined;
     this.#stack = parsed.trace;
     Object.defineProperties(this, {
-      name: {
-        enumerable: true,
-        configurable: false,
-        get: () => this.#name,
-        set: (value) => this.setName(value),
-      },
       message: {
         enumerable: true,
         configurable: false,
@@ -460,28 +454,27 @@ export class CustomStack extends oError {
             console.error(this.buildStyledStacktrace());
             return Deno.exit(1);
           }
-          this.buildStacktrace();
+          return this.buildStacktrace();
         },
         set: (value) => {
           const parsed = ErrorTrace.parse(value);
-          this.#name = parsed.name;
-          this.#message = parsed.message;
+          this.name = parsed.name;
+          this.#message = (parsed.message || "").trim()
+            ? parsed.message
+            : undefined;
           this.#stack = parsed.trace;
         },
       },
     });
   }
 
-  protected setName(value: string): this {
-    this.#name = value;
-    return this;
-  }
-
-  protected getName(): string {
-    return this.#name;
-  }
-
   protected setMessage(value: string): this {
+    if (
+      this.#message === undefined && this.#stack[0] &&
+      !this.#stack[0].line.trim()
+    ) {
+      this.removeTraceItem(0);
+    }
     this.#message = value;
     return this;
   }
@@ -492,6 +485,7 @@ export class CustomStack extends oError {
 
   protected unsetMessage(): this {
     this.#message = undefined;
+    this.injectTraceItem(new StackTraceItem(""), 0);
     return this;
   }
 
@@ -531,8 +525,8 @@ export class CustomStack extends oError {
 
   protected buildStyledStacktrace(): string {
     let str = bold(red(this.name));
-    if (this.message) {
-      str += ": " + italic(this.message);
+    if ((this.#message || "").trim()) {
+      str += ": " + italic((this.#message || "").trim());
     }
     let maxNoLen = 0;
     for (const item of this.#stack) {
@@ -594,7 +588,7 @@ export class CustomStack extends oError {
       for (const { line, no } of item.getHighlightedCode() || []) {
         str += `\n     ${dp} ` + (no === item.y
           ? (str: string) => red(bold(str))
-          : yellow)(no.toString().padStart(maxNoLen)) +
+          : dim)(no.toString().padStart(maxNoLen)) +
           ` ${dp} ` +
           line;
         if (no === item.y && item.x !== null) {
@@ -608,8 +602,8 @@ export class CustomStack extends oError {
 
   protected buildStacktrace(): string {
     let str = this.name;
-    if (this.message) {
-      str += ": " + this.message;
+    if (this.#message) {
+      str += ": " + this.#message;
     }
     let maxNoLen = 0;
     for (const item of this.#stack) {
@@ -641,8 +635,8 @@ export class CustomStack extends oError {
         for (let i = 1; i < len; i++) {
           if (i === len) {
             if (item.filename) {
-              str += `${item.name ||
-                item.filename}${item.buildLineNumberStringWithoutColors()}`;
+              str +=
+                `${item.filename}${item.buildLineNumberStringWithoutColors()}`;
             }
             break;
           }
@@ -655,7 +649,7 @@ export class CustomStack extends oError {
         if (item.isFunction) str += "(";
         if (item.isUnknown) str += "unknown location";
         else if (item.isNative) str += "native";
-        else str += item.name || item.filename;
+        else str += item.filename;
         str += item.buildLineNumberStringWithoutColors();
       }
       if (item.isFunction) str += ")";
