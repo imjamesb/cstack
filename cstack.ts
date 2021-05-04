@@ -20,6 +20,21 @@ const global = globalThis as unknown as Record<string, unknown>;
 global.oError ??= global.Error;
 const oError: ErrorConstructor = global.oError as ErrorConstructor;
 
+// @ts-ignore Don't worry about it.
+oError.stackTraceLimit = Infinity;
+
+let stackTraceLimit = 10;
+
+global.Error = class Error extends oError {
+  public static get stackTraceLimit() {
+    return stackTraceLimit;
+  }
+
+  public static set stackTraceLimit(value: number) {
+    stackTraceLimit = value;
+  }
+};
+
 export class Line {
   public readonly no: number;
   public readonly noLen: number;
@@ -173,9 +188,15 @@ export class Utils {
       : "");
   }
   public static isThrown(): boolean {
+    // @ts-ignore it is a thing, get over it.
+    const limit = oError.stackTraceLimit;
+    // @ts-ignore it is a thing, get over it.
+    oError.stackTraceLimit = 3;
     try {
       throw new oError("");
     } catch (error) {
+      // @ts-ignore it is a thing, get over it.
+      oError.stackTraceLimit = limit;
       return ((error.stack!.match(/ {4}at/g) || []).length < 3);
     }
   }
@@ -447,9 +468,8 @@ export class CustomStack extends oError {
             // @ts-ignore Because it exists.
             Error.prepareStackTrace(this, []);
             return "\r\u001b[2K" + this.buildStyledStacktrace();
-          } else {
-            return this.#message;
           }
+          return this.#message;
         },
         set: (value) =>
           value === undefined ? this.unsetMessage() : this.setMessage(value),
@@ -533,12 +553,24 @@ export class CustomStack extends oError {
       str += ": " + italic((this.#message || "").trim());
     }
     let maxNoLen = 0;
-    for (const item of this.#stack) {
+    for (
+      let i = 0;
+      // @ts-ignore It is a thing, deal with it.
+      i < Math.min(this.#stack.length, Error.stackTraceLimit);
+      i++
+    ) {
+      const item = this.#stack[i];
       for (const line of item.getCode() || []) {
         maxNoLen = Math.max(line.noLen);
       }
     }
-    for (const item of this.#stack) {
+    for (
+      let i = 0;
+      // @ts-ignore It is a thing, deal with it.
+      i < Math.min(this.#stack.length, Error.stackTraceLimit);
+      i++
+    ) {
+      const item = this.#stack[i];
       str += "\n";
       if (!item.parsed) {
         str += item.line;
@@ -610,12 +642,24 @@ export class CustomStack extends oError {
       str += ": " + this.#message;
     }
     let maxNoLen = 0;
-    for (const item of this.#stack) {
+    for (
+      let i = 0;
+      // @ts-ignore It is a thing, deal with it.
+      i < Math.min(this.#stack.length, Error.stackTraceLimit);
+      i++
+    ) {
+      const item = this.#stack[i];
       for (const line of item.getCode() || []) {
         maxNoLen = Math.max(line.noLen);
       }
     }
-    for (const item of this.#stack) {
+    for (
+      let i = 0;
+      // @ts-ignore It is a thing, deal with it.
+      i < Math.min(this.#stack.length, Error.stackTraceLimit);
+      i++
+    ) {
+      const item = this.#stack[i];
       str += "\n";
       if (!item.parsed) {
         str += item.line;
