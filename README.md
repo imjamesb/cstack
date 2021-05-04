@@ -1,5 +1,7 @@
 # Custom Stack
 
+[![example](./.assets/header.png)](#)
+
 This [deno](https://deno.land) module allows you to create the coolest looking
 errors, and customize the error stack trace as you wish. Given the opportunity
 cstack will also load your file content, highlight it, and pinpoint exactly
