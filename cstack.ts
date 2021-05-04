@@ -442,18 +442,22 @@ export class CustomStack extends oError {
       message: {
         enumerable: true,
         configurable: false,
-        get: () => this.#message,
+        get: () => {
+          if (Utils.isThrown()) {
+            // @ts-ignore Because it exists.
+            Error.prepareStackTrace(this, []);
+            return "\r\u001b[2K" + this.buildStyledStacktrace();
+          } else {
+            return this.#message;
+          }
+        },
         set: (value) =>
           value === undefined ? this.unsetMessage() : this.setMessage(value),
       },
       stack: {
-        enumerable: true,
+        enumerable: false,
         configurable: false,
         get: () => {
-          if (Utils.isThrown()) {
-            console.error(this.buildStyledStacktrace());
-            return Deno.exit(1);
-          }
           return this.buildStacktrace();
         },
         set: (value) => {
