@@ -2,10 +2,9 @@
 !/.assets
 !/.github
 !/.vscode
-!/lib
-!/lib/**
 !/.gitignore
-!/deps.ts
 !/LICENSE
 !/mod.ts
+!/cstack.ts
+!/errors.ts
 !/README.md

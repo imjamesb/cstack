@@ -1,34 +1,15 @@
 // Imports
-import { build, magic } from "./utils.ts";
-
-const global = globalThis as unknown as Record<string, unknown>;
-// This might be used later.
-global.oError ??= global.Error;
-
-const oError: ErrorConstructor = global.oError as ErrorConstructor;
+import { CustomStack } from "./cstack.ts";
 
 function createError(
   errorName: string,
-  obj: unknown = global,
+  obj: unknown = window,
 ): ErrorConstructor {
   const o = obj as Record<string, unknown>;
-  o[errorName] = class _ extends oError {
-    name = errorName;
-    constructor(message?: string) {
+  o[errorName] = class _ extends CustomStack {
+    public constructor(message?: string) {
       super(message);
-      magic(build(this, true));
-      let name = this.name;
-      Object.defineProperty(this, "name", {
-        configurable: true,
-        enumerable: true,
-        get() {
-          return name;
-        },
-        set: (value) => {
-          name = value;
-          build(this, true);
-        },
-      });
+      this.name = errorName;
     }
   };
   Object.defineProperty(o[errorName], "name", { value: errorName });
