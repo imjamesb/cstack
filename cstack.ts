@@ -10,7 +10,7 @@ import {
   magenta,
   red,
   yellow,
-} from "https://deno.land/std@0.92.0/fmt/colors.ts";
+} from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 const anon = "<anonymous>";
 const dp = dim("|");
