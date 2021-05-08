@@ -1,6 +1,6 @@
 // Imports
-import { DefaultTheme } from "https://deno.land/x/hue@0.0.0-alpha.0/themes/mod.ts";
-import Typescript from "https://deno.land/x/hue@0.0.0-alpha.0/languages/typescript/typescript.ts";
+import { DefaultTheme } from "https://deno.land/x/hue@0.0.0-alpha.1/themes/mod.ts";
+import Typescript from "https://deno.land/x/hue@0.0.0-alpha.1/languages/typescript/typescript.ts";
 import {
   bold,
   brightYellow,
